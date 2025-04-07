@@ -1,10 +1,21 @@
 
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import { SidebarProvider, Sidebar, SidebarContent, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarHeader, SidebarFooter, SidebarRail } from "@/components/ui/sidebar";
-import { Home, ListTodo, PlusCircle, Play, Wallet, Settings } from 'lucide-react';
+import { 
+  SidebarProvider, 
+  Sidebar, 
+  SidebarContent, 
+  SidebarMenu, 
+  SidebarMenuItem, 
+  SidebarMenuButton, 
+  SidebarHeader, 
+  SidebarFooter, 
+  SidebarRail 
+} from "@/components/ui/sidebar";
+import { Home, ListTodo, PlusCircle, Wallet, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useWallet } from '@/context/WalletContext';
+import Footer from './Footer';
 
 const AppLayout = () => {
   const { connected, address, connect, disconnect } = useWallet();
@@ -87,9 +98,12 @@ const AppLayout = () => {
           <SidebarRail />
         </Sidebar>
 
-        <div className="flex-1 overflow-auto">
-          <Outlet />
-        </div>
+        <main className="flex-1 overflow-auto flex flex-col">
+          <div className="flex-1">
+            <Outlet />
+          </div>
+          <Footer />
+        </main>
       </div>
     </SidebarProvider>
   );

@@ -33,7 +33,8 @@ const App = () => (
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>
-          <Footer className="fixed bottom-0 left-0 right-0 z-10" />
+          {/* Fixed: Removed className prop since Footer doesn't accept it */}
+          <Footer />
         </BrowserRouter>
       </WalletProvider>
     </TooltipProvider>
