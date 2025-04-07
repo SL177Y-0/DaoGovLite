@@ -4,11 +4,11 @@ import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
-    <footer className="bg-background/80 backdrop-blur-md border-t border-border w-full">
-      <div className="container mx-auto px-4 py-4">
+    <footer className="bg-background/90 backdrop-blur-md border-t border-border w-full py-4">
+      <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0">
-            <Link to="/" className="text-xl font-bold bg-gradient-to-r from-green-mist to-green-mist-lighter bg-clip-text text-transparent">
+            <Link to="/" className="text-xl font-bold font-heading bg-gradient-to-r from-light-purple to-neon-purple bg-clip-text text-transparent">
               DAOGovLite
             </Link>
             <p className="text-sm text-muted-foreground mt-1">
@@ -17,13 +17,13 @@ const Footer = () => {
           </div>
           
           <div className="flex flex-wrap justify-center gap-x-8 gap-y-2 text-sm text-muted-foreground">
-            <Link to="/" className="hover:text-green-mist transition-colors">
+            <Link to="/" className="hover:text-light-purple transition-colors">
               Home
             </Link>
-            <Link to="/proposals" className="hover:text-green-mist transition-colors">
+            <Link to="/proposals" className="hover:text-light-purple transition-colors">
               Proposals
             </Link>
-            <Link to="/create" className="hover:text-green-mist transition-colors">
+            <Link to="/create" className="hover:text-light-purple transition-colors">
               Create Proposal
             </Link>
           </div>
