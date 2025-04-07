@@ -15,8 +15,6 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, title }) => {
   React.useEffect(() => {
     if (title) {
       document.title = `${title} | DAOGovLite`;
-    } else {
-      document.title = "DAOGovLite | Decentralized Governance";
     }
   }, [title]);
 

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { 
   SidebarProvider, 
@@ -19,7 +19,6 @@ import Footer from './Footer';
 
 const AppLayout = () => {
   const { connected, address, connect, disconnect } = useWallet();
-  const [isCollapsed, setIsCollapsed] = useState(false);
   
   // Format address for display
   const formatAddress = (addr: string) => {
@@ -45,7 +44,7 @@ const AppLayout = () => {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Home">
-                  <Link to="/" className="text-sidebar-foreground hover:bg-sidebar-accent/30 rounded-md transition-colors">
+                  <Link to="/" className="text-sidebar-foreground">
                     <Home className="mr-2" />
                     <span>Home</span>
                   </Link>
@@ -53,7 +52,7 @@ const AppLayout = () => {
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Proposals">
-                  <Link to="/proposals" className="text-sidebar-foreground hover:bg-sidebar-accent/30 rounded-md transition-colors">
+                  <Link to="/proposals" className="text-sidebar-foreground">
                     <ListTodo className="mr-2" />
                     <span>Proposals</span>
                   </Link>
@@ -61,7 +60,7 @@ const AppLayout = () => {
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild tooltip="Create Proposal">
-                  <Link to="/create" className="text-sidebar-foreground hover:bg-sidebar-accent/30 rounded-md transition-colors">
+                  <Link to="/create" className="text-sidebar-foreground">
                     <PlusCircle className="mr-2" />
                     <span>Create Proposal</span>
                   </Link>
@@ -72,7 +71,7 @@ const AppLayout = () => {
 
           <SidebarFooter className="mt-auto pb-4">
             {connected ? (
-              <div className="px-3 py-2 mx-2 rounded-md bg-sidebar-accent/10 border border-sidebar-accent/20">
+              <div className="px-3 py-2 mx-2 rounded-md bg-sidebar-accent/10">
                 <div className="text-xs text-sidebar-foreground/70">Connected Wallet</div>
                 <div className="text-sm text-sidebar-foreground font-medium">
                   {formatAddress(address || '')}
@@ -103,7 +102,6 @@ const AppLayout = () => {
           <div className="flex-1">
             <Outlet />
           </div>
-          {/* Footer is now properly placed within the main content area */}
           <Footer />
         </main>
       </div>
