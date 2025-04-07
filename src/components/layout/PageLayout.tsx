@@ -4,7 +4,6 @@ import { WalletProvider } from '@/context/WalletContext';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { SidebarProvider } from "@/components/ui/sidebar";
 
 interface PageLayoutProps {
   children: React.ReactNode;
@@ -27,11 +26,9 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, title }) => {
       <Sonner />
       <TooltipProvider>
         <WalletProvider>
-          <SidebarProvider defaultOpen={true}>
-            <div className="main-container">
-              {children}
-            </div>
-          </SidebarProvider>
+          <div className="min-h-screen bg-background text-foreground flex flex-col">
+            {children}
+          </div>
         </WalletProvider>
       </TooltipProvider>
     </>
