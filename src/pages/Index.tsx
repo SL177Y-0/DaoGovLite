@@ -49,13 +49,13 @@ const Index = () => {
   const { connected, connect } = useWallet();
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen px-4 md:px-8 pt-8 pb-16">
       {/* Hero Section */}
-      <section className="relative py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-dao-gradient opacity-30"></div>
+      <section className="relative py-16 md:py-24 overflow-hidden">
+        <div className="absolute inset-0 bg-green-mist-gradient opacity-30"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-green-mist-lighter bg-clip-text text-transparent">
               Decentralized Governance Unleashed
             </h1>
             <p className="text-lg md:text-xl text-gray-300 mb-8">
@@ -65,7 +65,7 @@ const Index = () => {
               {!connected ? (
                 <Button 
                   onClick={connect} 
-                  className="glow-btn bg-primary/90 text-white hover:bg-primary animate-pulse-glow"
+                  className="glow-btn bg-green-mist/90 text-white hover:bg-green-mist animate-pulse-glow"
                   size="lg"
                 >
                   Connect Wallet
@@ -73,7 +73,7 @@ const Index = () => {
               ) : (
                 <Link to="/create">
                   <Button 
-                    className="glow-btn bg-primary/90 text-white hover:bg-primary"
+                    className="glow-btn bg-green-mist/90 text-white hover:bg-green-mist"
                     size="lg"
                   >
                     Create Proposal
@@ -95,11 +95,11 @@ const Index = () => {
       </section>
 
       {/* Active Proposals Section */}
-      <section className="py-16 bg-black/30">
+      <section className="py-16 bg-black/30 rounded-xl green-mist-card">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-2xl font-bold">Active Proposals</h2>
-            <Link to="/proposals" className="text-primary hover:text-primary/80 flex items-center">
+            <Link to="/proposals" className="text-green-mist hover:text-green-mist-lighter flex items-center">
               View All <ArrowRight size={16} className="ml-1" />
             </Link>
           </div>
@@ -116,27 +116,27 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <h2 className="text-2xl font-bold text-center mb-12">Governance Made Simple</h2>
           <div className="grid gap-8 grid-cols-1 md:grid-cols-3">
-            <div className="glass-card p-6 rounded-lg">
-              <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mb-4">
-                <span className="text-xl font-bold text-primary">1</span>
+            <div className="green-mist-card p-6 rounded-lg">
+              <div className="w-12 h-12 bg-green-mist/20 rounded-full flex items-center justify-center mb-4">
+                <span className="text-xl font-bold text-green-mist">1</span>
               </div>
               <h3 className="text-lg font-bold mb-2">Create Proposals</h3>
               <p className="text-muted-foreground">
                 Submit governance proposals with clear objectives and implementation details.
               </p>
             </div>
-            <div className="glass-card p-6 rounded-lg">
-              <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mb-4">
-                <span className="text-xl font-bold text-primary">2</span>
+            <div className="green-mist-card p-6 rounded-lg">
+              <div className="w-12 h-12 bg-green-mist/20 rounded-full flex items-center justify-center mb-4">
+                <span className="text-xl font-bold text-green-mist">2</span>
               </div>
               <h3 className="text-lg font-bold mb-2">Vote with Tokens</h3>
               <p className="text-muted-foreground">
                 Cast your vote using token-weighted voting power. More tokens, more influence.
               </p>
             </div>
-            <div className="glass-card p-6 rounded-lg">
-              <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center mb-4">
-                <span className="text-xl font-bold text-primary">3</span>
+            <div className="green-mist-card p-6 rounded-lg">
+              <div className="w-12 h-12 bg-green-mist/20 rounded-full flex items-center justify-center mb-4">
+                <span className="text-xl font-bold text-green-mist">3</span>
               </div>
               <h3 className="text-lg font-bold mb-2">Execute On-Chain</h3>
               <p className="text-muted-foreground">

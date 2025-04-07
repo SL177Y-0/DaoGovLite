@@ -65,6 +65,13 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Green mist specific colors
+				'green-mist': {
+					DEFAULT: 'hsl(var(--green-mist))',
+					foreground: 'hsl(var(--green-mist-foreground))',
+					darker: 'hsl(var(--green-mist-darker))',
+					lighter: 'hsl(var(--green-mist-lighter))',
 				}
 			},
 			borderRadius: {
@@ -84,11 +91,11 @@ export default {
 				'pulse-glow': {
 					'0%, 100%': { 
 						opacity: '1',
-						boxShadow: '0 0 10px 2px rgba(0, 123, 255, 0.7), 0 0 20px 4px rgba(0, 123, 255, 0.5)'
+						boxShadow: '0 0 10px 2px rgba(0, 255, 155, 0.7), 0 0 20px 4px rgba(0, 255, 155, 0.5)'
 					},
 					'50%': { 
 						opacity: '0.8',
-						boxShadow: '0 0 15px 3px rgba(0, 123, 255, 0.9), 0 0 25px 5px rgba(0, 123, 255, 0.7)'
+						boxShadow: '0 0 15px 3px rgba(0, 255, 155, 0.9), 0 0 25px 5px rgba(0, 255, 155, 0.7)'
 					}
 				}
 			},
@@ -99,7 +106,8 @@ export default {
 			},
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-				'dao-gradient': 'linear-gradient(135deg, rgba(0, 123, 255, 0.2) 0%, rgba(90, 0, 255, 0.1) 100%)'
+				'dao-gradient': 'linear-gradient(135deg, rgba(0, 255, 155, 0.2) 0%, rgba(0, 200, 100, 0.1) 100%)',
+				'green-mist-gradient': 'linear-gradient(135deg, rgba(0, 255, 155, 0.1) 0%, rgba(0, 200, 100, 0.05) 100%)'
 			}
 		}
 	},
