@@ -1,0 +1,153 @@
+.execution-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.execution-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.execution-header h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff;
+  margin: 0;
+}
+
+.refresh-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: rgba(138, 43, 226, 0.2);
+  border: 1px solid rgba(138, 43, 226, 0.5);
+  border-radius: 0.5rem;
+  color: #fff;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.refresh-button:hover:not(:disabled) {
+  background-color: rgba(138, 43, 226, 0.3);
+}
+
+.refresh-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.last-refresh {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.75rem;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 0;
+  gap: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.proposals-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.pending-proposals h2,
+.active-proposals h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+.info-text {
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+.proposals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .proposals-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.no-proposals {
+  background: rgba(20, 20, 40, 0.5);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  padding: 2rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.no-proposals h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+.no-proposals p {
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 0.5rem;
+}
+
+/* Shared styles for proposal cards */
+.glassmorphism {
+  background: rgba(20, 20, 40, 0.5);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.glassmorphism:hover {
+  transform: translateY(-2px);
+  border-color: rgba(138, 43, 226, 0.3);
+}
+
+/* Custom colors for your theme */
+.text-dao-lightPurple {
+  color: rgba(180, 160, 255, 0.8);
+}
+
+.text-dao-neonPurple {
+  color: rgb(138, 43, 226);
+}
+
+.bg-dao-neonPurple {
+  background-color: rgb(138, 43, 226);
+}
+
+.bg-dao-darkPurple {
+  background-color: rgba(60, 25, 110, 0.5);
+}
+
+/* Animation for refresh icon */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+} 
