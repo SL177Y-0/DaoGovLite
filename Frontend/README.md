@@ -1,187 +1,109 @@
-# VoteVerse Frontend
+##DaoGovLite
 
-VoteVerse is a decentralized governance platform that allows users to create, vote on, and execute proposals on the blockchain. This is the frontend application built with React, TypeScript, and ethers.js.
+A decentralized governance application built on Ethereum, enabling token holders to create, vote on, and execute proposals in a transparent and decentralized manner.
 
 ## Features
 
-- 🏠 Home page with active proposals overview
-- 📝 Create new proposals
-- ✅ Vote on active proposals
-- ⚡ Execute passed proposals
-- 💼 Wallet integration with MetaMask
-- 🔄 Real-time updates for proposal status
-- 🎨 Modern and responsive UI
+- **Wallet Connection**: Connect with MetaMask or other Web3 wallets
+- **Proposal Creation**: Create governance proposals with customizable voting periods
+- **Token-Weighted Voting**: Cast votes with weight proportional to your token holdings
+- **Real-time Updates**: View proposal status, voting results, and timers in real-time
+- **On-chain Execution**: Execute passed proposals directly through the application
+- **Responsive Design**: Fully responsive interface with a sleek, modern aesthetic
 
-## Prerequisites
+## Tech Stack
 
-- Node.js (v16 or higher)
-- npm or yarn
-- MetaMask wallet extension
-- Access to a supported blockchain network (Sepolia, Goerli, or Localhost)
+- **Frontend**: Next.js 14, React, TypeScript, Tailwind CSS
+- **Smart Contracts**: Solidity (ERC-20 Governance Token & DAO Governance contract)
+- **Web3 Integration**: ethers.js for blockchain interaction
+- **Styling**: Custom Tailwind components with glassmorphism effects
 
-## Installation
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+ installed
+- MetaMask or another Web3 wallet
+- Access to Ethereum (mainnet, testnet, or local network)
+
+### Installation
 
 1. Clone the repository:
-```bash
-git clone https://github.com/your-username/voteverse.git
-cd voteverse/Frontend
-```
+   ```bash
+   git clone https://github.com/yourusername/
+   cd /NextJS
+   ```
 
 2. Install dependencies:
-```bash
-npm install
-# or
-yarn install
+   ```bash
+   npm install
+   ```
+
+3. Configure environment variables:
+   Create a `.env.local` file with the following variables:
+   ```
+   NEXT_PUBLIC_DEFAULT_NETWORK=sepolia
+   ```
+
+4. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+5. Open [http://localhost:3000](http://localhost:3000) with your browser.
+
+## Usage
+
+### Connecting Your Wallet
+
+1. Click the "Connect Wallet" button in the sidebar
+2. Approve the connection request in your wallet
+
+### Creating a Proposal
+
+1. Navigate to "Create Proposal" in the sidebar
+2. Fill in the proposal title and description
+3. Set the voting period (in days)
+4. Submit the proposal
+
+### Voting on Proposals
+
+1. Browse active proposals on the homepage
+2. Click on a proposal to view details
+3. Cast your vote "For" or "Against"
+
+### Executing Proposals
+
+1. Navigate to the "Execution" page
+2. Find proposals in the "Ready for Execution" section
+3. Click "Execute" on any passed proposal
+
+## Smart Contract Integration
+
+The application interacts with two main contracts:
+
+- **GovernanceToken**: ERC-20 token that grants voting power
+- **DAOGovLite**: Handles proposal creation, voting, and execution
+
+Contract ABIs are stored in the `lib/contracts` directory.
+
+## Folder Structure
+
 ```
-
-3. Create a `.env` file in the root directory with the following variables:
-```env
-VITE_DAO_CONTRACT_ADDRESS=your_contract_address
-VITE_TOKEN_CONTRACT_ADDRESS=your_token_contract_address
-VITE_RPC_URL=your_rpc_url
+NextJS/
+├── app/                # Next.js 14 app directory
+│   ├── create-proposal/ # Proposal creation page
+│   ├── execution/       # Proposal execution page
+│   ├── proposals/       # Proposal details pages
+│   ├── globals.css      # Global styles
+│   ├── layout.tsx       # Root layout component
+│   └── page.tsx         # Homepage
+├── components/          # Reusable React components
+├── contexts/            # React contexts (Web3Context)
+├── lib/                 # Utility functions and contract ABIs
+│   ├── contracts/       # Smart contract ABIs and addresses
+│   ├── types.ts         # TypeScript type definitions
+│   └── utils.ts         # Helper functions
+├── public/              # Static assets
+└── README.md            # Project documentation
 ```
-
-## Development
-
-To start the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-```
-
-The application will be available at `http://localhost:5173`
-
-## Building for Production
-
-To create a production build:
-
-```bash
-npm run build
-# or
-yarn build
-```
-
-The built files will be in the `dist` directory.
-
-## Project Structure
-
-```
-Frontend/
-├── src/
-│   ├── components/     # Reusable UI components
-│   ├── contexts/       # React contexts (Web3, etc.)
-│   ├── hooks/          # Custom React hooks
-│   ├── lib/            # Utility functions and services
-│   ├── pages/          # Page components
-│   └── styles/         # Global styles and themes
-├── public/             # Static assets
-└── index.html          # Entry HTML file
-```
-
-## Usage Guide
-
-1. **Connecting Wallet**
-   - Click the wallet icon in the sidebar
-   - Connect your MetaMask wallet
-   - Ensure you're on the correct network
-
-2. **Viewing Proposals**
-   - Active proposals are shown on the home page
-   - Click "View All" to see all proposals
-   - Each proposal card shows:
-     - Title
-     - Status
-     - Time remaining
-     - Vote counts
-
-3. **Creating Proposals**
-   - Navigate to "Create Proposal"
-   - Fill in the proposal details:
-     - Title
-     - Description
-     - Duration (in days)
-   - Submit the proposal
-
-4. **Voting**
-   - Select an active proposal
-   - Choose to vote "For" or "Against"
-   - Confirm the transaction in MetaMask
-
-5. **Executing Proposals**
-   - Navigate to the Execution page
-   - View proposals that have passed
-   - Click "Execute" to execute a proposal
-   - Confirm the transaction in MetaMask
-
-## Troubleshooting
-
-1. **Wallet Connection Issues**
-   - Ensure MetaMask is installed and unlocked
-   - Check if you're on the correct network
-   - Try refreshing the page
-
-2. **Transaction Failures**
-   - Check your wallet balance
-   - Ensure you have enough gas
-   - Verify network congestion
-
-3. **UI Issues**
-   - Clear browser cache
-   - Try a different browser
-   - Check console for errors
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Environment Variables
-
-The application now uses environment variables for configuration. Copy the `.env.example` file to `.env` and modify the values as needed:
-
-```bash
-cp .env.example .env
-```
-
-### Available Environment Variables
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| REACT_APP_DEFAULT_NETWORK | Default network to connect to | SEPOLIA |
-| REACT_APP_USE_CUSTOM_RPC | Whether to use custom RPC endpoints | true |
-| REACT_APP_RPC_LOCALHOST | RPC endpoint for local development | http://localhost:8545 |
-| REACT_APP_RPC_MAINNET | RPC endpoint for Ethereum Mainnet | https://eth-mainnet.public.blastapi.io |
-| REACT_APP_RPC_SEPOLIA | RPC endpoint for Sepolia Testnet | https://eth-sepolia.g.alchemy.com/v2/demo |
-| REACT_APP_CONTRACT_DAO_* | Contract addresses for the DAO contract | See .env.example |
-| REACT_APP_CONTRACT_TOKEN_* | Contract addresses for the Token contract | See .env.example |
-| REACT_APP_CACHE_* | Cache duration settings in milliseconds | See .env.example |
-
-## Recent Fixes
-
-### Proposal Data Error Handling
-
-- Fixed error: `TypeError: Cannot read properties of undefined (reading 'endTime')` 
-- Added null checking for proposal data before accessing properties
-- Improved error handling in the `getProposalById` function
-
-### Wallet Connection
-
-- Modified auto-connect behavior to be less aggressive
-- Only auto-connect if the user has explicitly connected before (using localStorage)
-- Fixed dependencies in React hook functions
-- Added safeguards to prevent multiple simultaneous connection attempts
-
-### Configuration Management
-
-- Moved sensitive URLs and contract addresses to environment variables
-- Created `.env.example` for documentation and easy setup
-- Improved caching system with configurable durations 

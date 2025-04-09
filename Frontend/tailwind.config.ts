@@ -1,21 +1,13 @@
+import type { Config } from "tailwindcss"
 
-import { type Config } from "tailwindcss";
-
-const config = {
-  darkMode: ["class"],
+const config: Config = {
   content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "*.{js,ts,jsx,tsx,mdx}",
   ],
-  prefix: "",
   theme: {
-    container: {
-      center: true,
-      padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
-    },
     extend: {
       colors: {
         border: "hsl(var(--border))",
@@ -93,12 +85,9 @@ const config = {
         "accordion-up": "accordion-up 0.2s ease-out",
         "pulse-glow": "pulse-glow 2s infinite",
       },
-      backgroundImage: {
-        'hero-pattern': "url('/lovable-uploads/581d675b-c1b5-425c-837a-f7c50f234df4.png')",
-      },
     },
   },
   plugins: [require("tailwindcss-animate")],
-} satisfies Config;
+}
 
-export default config;
+export default config
