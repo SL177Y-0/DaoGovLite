@@ -1,5 +1,5 @@
 ---
-### DaoGovLite 
+## DaoGovLite 
 ---
 A decentralized governance platform that enables users to create, vote on, and execute proposals on the blockchain. This platform combines a modern React frontend with secure Solidity smart contracts to deliver a complete DAO governance solution.
 ---
