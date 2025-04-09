@@ -2,9 +2,13 @@
 
 import React, { createContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { ethers } from 'ethers';
-import { DAOGovLiteABI } from '@/lib/contracts/DAOGovLiteABI';
-import { GovernanceTokenABI } from '@/lib/contracts/GovernanceTokenABI';
-import { getContractAddress, DEFAULT_NETWORK, getNetworkNameFromChainId, BLOCKCHAIN_CACHE_TIMES, RPC_ENDPOINTS } from '@/lib/contracts/addresses';
+// Replace TypeScript imports with direct JSON imports
+import DAOGovLiteABI from '../contracts/DAOGovLite-abi.json';
+import GovernanceTokenABI from '../contracts/GovernanceToken-abi.json';
+import DAOGovLiteAddress from '../contracts/DAOGovLite-address.json';
+import GovernanceTokenAddress from '../contracts/GovernanceToken-address.json';
+// Keep using the network utilities but exclude getContractAddress
+import { DEFAULT_NETWORK, getNetworkNameFromChainId, BLOCKCHAIN_CACHE_TIMES, RPC_ENDPOINTS } from '@/lib/contracts/addresses';
 import { Proposal, Web3StateType } from '@/lib/types';
 import { calculateTimeRemaining, formatAddress, getProposalStatus } from '@/lib/utils';
 
@@ -57,6 +61,30 @@ interface CacheStore {
 }
 
 const cache: CacheStore = {};
+
+// Replace getContractAddress with a function that uses the imported JSON
+const getContractAddress = (contractName: string, networkName: string): string => {
+  if (contractName === 'DAOGovLite') {
+    // Use environment variables if available, otherwise use the JSON file
+    if (networkName === 'SEPOLIA') {
+      return process.env.NEXT_PUBLIC_CONTRACT_DAO_SEPOLIA || DAOGovLiteAddress.address;
+    } else if (networkName === 'LOCALHOST') {
+      return process.env.NEXT_PUBLIC_CONTRACT_DAO_LOCALHOST || '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+    }
+    return DAOGovLiteAddress.address;
+  } 
+  else if (contractName === 'GovernanceToken') {
+    if (networkName === 'SEPOLIA') {
+      return process.env.NEXT_PUBLIC_CONTRACT_TOKEN_SEPOLIA || GovernanceTokenAddress.address;
+    } else if (networkName === 'LOCALHOST') {
+      return process.env.NEXT_PUBLIC_CONTRACT_TOKEN_LOCALHOST || '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
+    }
+    return GovernanceTokenAddress.address;
+  }
+  
+  console.error(`Contract "${contractName}" not found`);
+  return "";
+};
 
 export const Web3Provider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, setState] = useState<Web3StateType>({
@@ -384,13 +412,11 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
 
     try {
-      // Call the vote function
+      // Call the contract method
       const tx = await state.daoContract.vote(proposalId, voteFor);
       const receipt = await tx.wait();
       
-      // Clear cache for affected proposal
-      delete cache[`proposal-${proposalId}`];
-      
+      // Check if the transaction was successful
       return receipt.status === 1;
     } catch (error) {
       console.error(`Error voting on proposal #${proposalId}:`, error);
@@ -406,13 +432,11 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
 
     try {
-      // Call the execute function
+      // Call the contract method
       const tx = await state.daoContract.executeProposal(proposalId);
       const receipt = await tx.wait();
       
-      // Clear cache for affected proposal
-      delete cache[`proposal-${proposalId}`];
-      
+      // Check if the transaction was successful
       return receipt.status === 1;
     } catch (error) {
       console.error(`Error executing proposal #${proposalId}:`, error);
@@ -423,64 +447,34 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Get vote info for a proposal
   const getVoteInfo = async (proposalId: number): Promise<{ hasVoted: boolean; support: boolean | null; votingPower: number }> => {
     if (!state.daoContract || !state.account) {
+      console.error('DAO contract not initialized or wallet not connected');
       return { hasVoted: false, support: null, votingPower: 0 };
     }
 
-    const cacheKey = `vote-${proposalId}-${state.account}`;
-    if (cache[cacheKey] && Date.now() - cache[cacheKey].timestamp < BLOCKCHAIN_CACHE_TIMES.VOTE_STATUS) {
-      return cache[cacheKey].value;
-    }
-
     try {
-      // Get if user has voted
-      const hasVoted = await state.daoContract.hasVoted(proposalId, state.account);
+      // Call the contract method
+      const [hasVoted, support, votingPower] = await state.daoContract.getVoteInfo(proposalId, state.account);
       
-      // Get user's vote if they voted
-      let support = null;
-      if (hasVoted) {
-        const voteData = await state.daoContract.getVote(proposalId, state.account);
-        support = voteData.support;
-      }
-      
-      // Get user's voting power
-      const votingPower = parseFloat(ethers.utils.formatUnits(
-        await state.tokenContract.balanceOf(state.account),
-        18
-      ));
-      
-      const result = { hasVoted, support, votingPower };
-      
-      // Cache the result
-      cache[cacheKey] = {
-        value: result,
-        timestamp: Date.now(),
-      };
-      
-      return result;
+      return { hasVoted, support, votingPower: parseFloat(ethers.utils.formatUnits(votingPower, 18)) };
     } catch (error) {
       console.error(`Error getting vote info for proposal #${proposalId}:`, error);
       return { hasVoted: false, support: null, votingPower: 0 };
     }
   };
 
-  // Prepare context value
-  const contextValue: Web3ContextProps = {
-    ...state,
-    connectWallet,
-    disconnectWallet,
-    getProposals,
-    getProposalById,
-    createProposal,
-    voteOnProposal,
-    executeProposal,
-    getVoteInfo,
-  };
-
   return (
-    <Web3Context.Provider value={contextValue}>
+    <Web3Context.Provider value={{
+      ...state,
+      connectWallet,
+      disconnectWallet,
+      getProposals,
+      getProposalById,
+      createProposal,
+      voteOnProposal,
+      executeProposal,
+      getVoteInfo
+    }}>
       {children}
     </Web3Context.Provider>
   );
 };
-
-export default Web3Provider; 

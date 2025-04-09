@@ -1,109 +1,97 @@
-## DaoGovLite
+# DAOGovLite - Frontend Application
 
-A decentralized governance application built on Ethereum, enabling token holders to create, vote on, and execute proposals in a transparent and decentralized manner.
+This directory contains the frontend application for the DAOGovLite governance platform, providing a user interface for interacting with the blockchain contracts.
+
+## Technology Stack
+
+- **Framework**: Next.js 13 with App Router
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Blockchain Interaction**: ethers.js
+- **State Management**: React Context API
 
 ## Features
 
-- **Wallet Connection**: Connect with MetaMask or other Web3 wallets
-- **Proposal Creation**: Create governance proposals with customizable voting periods
-- **Token-Weighted Voting**: Cast votes with weight proportional to your token holdings
-- **Real-time Updates**: View proposal status, voting results, and timers in real-time
-- **On-chain Execution**: Execute passed proposals directly through the application
-- **Responsive Design**: Fully responsive interface with a sleek, modern aesthetic
+- **Wallet Connection**: Seamless integration with MetaMask and other Web3 wallets
+- **Proposal Management**:
+  - Create new governance proposals
+  - Vote on active proposals
+  - Execute passed proposals
+- **Dashboard**: View and manage your governance activities
+- **Responsive Design**: Works on mobile and desktop devices
 
-## Tech Stack
+## Directory Structure
 
-- **Frontend**: Next.js 14, React, TypeScript, Tailwind CSS
-- **Smart Contracts**: Solidity (ERC-20 Governance Token & DAO Governance contract)
-- **Web3 Integration**: ethers.js for blockchain interaction
-- **Styling**: Custom Tailwind components with glassmorphism effects
+```
+frontend/
+├── app/                  # Next.js App Router pages
+│   ├── proposals/        # Proposal listing and details
+│   ├── execution/        # Proposal execution interface
+│   ├── create-proposal/  # Proposal creation form
+│   └── layout.tsx        # Main layout component
+├── components/           # Reusable UI components
+│   ├── ui/               # Base UI components
+│   ├── proposal-card.tsx # Proposal display component
+│   └── ...
+├── contexts/             # React Context providers
+│   └── Web3Context.tsx   # Blockchain connectivity
+├── contracts/            # Contract ABIs and addresses
+│   ├── DAOGovLite-abi.json
+│   ├── DAOGovLite-address.json
+│   └── ...
+├── lib/                  # Utility functions
+│   ├── contracts/        # Contract utilities
+│   └── utils.ts          # Helper functions
+└── styles/               # Global styling
+```
 
-## Getting Started
+## Setup
 
-### Prerequisites
-
-- Node.js 18+ installed
-- MetaMask or another Web3 wallet
-- Access to Ethereum (mainnet, testnet, or local network)
-
-### Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/
-   cd /NextJS
+1. Install dependencies:
    ```
-
-2. Install dependencies:
-   ```bash
    npm install
    ```
 
-3. Configure environment variables:
-   Create a `.env.local` file with the following variables:
+2. Create a `.env.local` file based on `.env.example`:
    ```
-   NEXT_PUBLIC_DEFAULT_NETWORK=sepolia
-   ```
-
-4. Run the development server:
-   ```bash
-   npm run dev
+   NEXT_PUBLIC_DAO_CONTRACT_ADDRESS=your_dao_contract_address
+   NEXT_PUBLIC_TOKEN_CONTRACT_ADDRESS=your_token_contract_address
    ```
 
-5. Open [http://localhost:3000](http://localhost:3000) with your browser.
+## Running the Application
 
-## Usage
-
-### Connecting Your Wallet
-
-1. Click the "Connect Wallet" button in the sidebar
-2. Approve the connection request in your wallet
-
-### Creating a Proposal
-
-1. Navigate to "Create Proposal" in the sidebar
-2. Fill in the proposal title and description
-3. Set the voting period (in days)
-4. Submit the proposal
-
-### Voting on Proposals
-
-1. Browse active proposals on the homepage
-2. Click on a proposal to view details
-3. Cast your vote "For" or "Against"
-
-### Executing Proposals
-
-1. Navigate to the "Execution" page
-2. Find proposals in the "Ready for Execution" section
-3. Click "Execute" on any passed proposal
-
-## Smart Contract Integration
-
-The application interacts with two main contracts:
-
-- **GovernanceToken**: ERC-20 token that grants voting power
-- **DAOGovLite**: Handles proposal creation, voting, and execution
-
-Contract ABIs are stored in the `lib/contracts` directory.
-
-## Folder Structure
-
+Development mode:
 ```
-NextJS/
-├── app/                # Next.js 14 app directory
-│   ├── create-proposal/ # Proposal creation page
-│   ├── execution/       # Proposal execution page
-│   ├── proposals/       # Proposal details pages
-│   ├── globals.css      # Global styles
-│   ├── layout.tsx       # Root layout component
-│   └── page.tsx         # Homepage
-├── components/          # Reusable React components
-├── contexts/            # React contexts (Web3Context)
-├── lib/                 # Utility functions and contract ABIs
-│   ├── contracts/       # Smart contract ABIs and addresses
-│   ├── types.ts         # TypeScript type definitions
-│   └── utils.ts         # Helper functions
-├── public/              # Static assets
-└── README.md            # Project documentation
+npm run dev
 ```
+
+Production build:
+```
+npm run build
+npm start
+```
+
+## Contract Integration
+
+The frontend integrates with the blockchain contracts through:
+
+1. **JSON Contract Files**: Located in the `contracts/` directory:
+   - ABI files containing contract interfaces
+   - Address files with deployed contract addresses
+
+2. **Web3Context**: Provides blockchain connectivity:
+   - Wallet connection handling
+   - Contract instance creation
+   - Transaction management
+
+## Environment Configuration
+
+- Configure contract addresses in `.env.local` file
+- Supports multiple networks (localhost, testnet, mainnet)
+- Network switching is handled automatically
+
+## Development Notes
+
+- Use `app/` directory for creating new pages (Next.js App Router)
+- Component styling is done with Tailwind utility classes
+- Contract interaction should be done through the Web3Context 

@@ -1,0 +1,12 @@
+{
+  "name": "daogov-lite-blockchain",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "compile": "node compile.js"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.9.0",
+    "solc": "^0.8.20"
+  }
+}
