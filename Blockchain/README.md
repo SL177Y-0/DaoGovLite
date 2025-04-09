@@ -1,4 +1,4 @@
-# DAOGovLite - Blockchain Contracts
+# DAOGovLite - Blockchain
 
 This directory contains the smart contracts for the DAOGovLite governance platform, implementing a decentralized autonomous organization (DAO) with proposal and voting capabilities.
 

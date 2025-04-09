@@ -1,4 +1,4 @@
-# DAOGovLite - Frontend Application
+# DAOGovLite - Frontend
 
 This directory contains the frontend application for the DAOGovLite governance platform, providing a user interface for interacting with the blockchain contracts.
 
