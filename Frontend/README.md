@@ -1,4 +1,4 @@
-##DaoGovLite
+## DaoGovLite
 
 A decentralized governance application built on Ethereum, enabling token holders to create, vote on, and execute proposals in a transparent and decentralized manner.
 
