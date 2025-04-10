@@ -2,11 +2,9 @@
 
 import React, { createContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { ethers } from 'ethers';
-// Replace TypeScript imports with direct JSON imports
-import DAOGovLiteABI from '../contracts/DAOGovLite-abi.json';
-import GovernanceTokenABI from '../contracts/GovernanceToken-abi.json';
-import DAOGovLiteAddress from '../contracts/DAOGovLite-address.json';
-import GovernanceTokenAddress from '../contracts/GovernanceToken-address.json';
+// Import the combined contract ABI and address
+import DAOGovLiteWithTokenABI from '../contracts/DAOGovLiteWithToken-abi.json';
+import DAOGovLiteWithTokenAddress from '../contracts/DAOGovLiteWithToken-address.json';
 // Keep using the network utilities but exclude getContractAddress
 import { DEFAULT_NETWORK, getNetworkNameFromChainId, BLOCKCHAIN_CACHE_TIMES, RPC_ENDPOINTS } from '@/lib/contracts/addresses';
 import { Proposal, Web3StateType } from '@/lib/types';
@@ -36,8 +34,7 @@ export const Web3Context = createContext<Web3ContextProps>({
   chainId: null,
   isConnected: false,
   provider: null,
-  daoContract: null,
-  tokenContract: null,
+  contract: null,
   tokenBalance: '0',
   isLoading: false,
   connectWallet: async () => {},
@@ -62,28 +59,15 @@ interface CacheStore {
 
 const cache: CacheStore = {};
 
-// Replace getContractAddress with a function that uses the imported JSON
-const getContractAddress = (contractName: string, networkName: string): string => {
-  if (contractName === 'DAOGovLite') {
-    // Use environment variables if available, otherwise use the JSON file
-    if (networkName === 'SEPOLIA') {
-      return process.env.NEXT_PUBLIC_CONTRACT_DAO_SEPOLIA || DAOGovLiteAddress.address;
-    } else if (networkName === 'LOCALHOST') {
-      return process.env.NEXT_PUBLIC_CONTRACT_DAO_LOCALHOST || '0x5FbDB2315678afecb367f032d93F642f64180aa3';
-    }
-    return DAOGovLiteAddress.address;
-  } 
-  else if (contractName === 'GovernanceToken') {
-    if (networkName === 'SEPOLIA') {
-      return process.env.NEXT_PUBLIC_CONTRACT_TOKEN_SEPOLIA || GovernanceTokenAddress.address;
-    } else if (networkName === 'LOCALHOST') {
-      return process.env.NEXT_PUBLIC_CONTRACT_TOKEN_LOCALHOST || '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
-    }
-    return GovernanceTokenAddress.address;
+// Function to get contract address based on network
+const getContractAddress = (networkName: string): string => {
+  // Use environment variables if available, otherwise use the JSON file
+  if (networkName === 'SEPOLIA') {
+    return process.env.NEXT_PUBLIC_CONTRACT_DAOGOV_WITH_TOKEN_SEPOLIA || DAOGovLiteWithTokenAddress.address;
+  } else if (networkName === 'LOCALHOST') {
+    return process.env.NEXT_PUBLIC_CONTRACT_DAOGOV_WITH_TOKEN_LOCALHOST || DAOGovLiteWithTokenAddress.address;
   }
-  
-  console.error(`Contract "${contractName}" not found`);
-  return "";
+  return DAOGovLiteWithTokenAddress.address;
 };
 
 export const Web3Provider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -92,14 +76,13 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({ children }) =>
     chainId: null,
     isConnected: false,
     provider: null,
-    daoContract: null,
-    tokenContract: null,
+    contract: null,
     tokenBalance: '0',
     isLoading: false,
   });
 
-  // Initialize provider and contracts
-  const initializeProviderAndContracts = useCallback(async () => {
+  // Initialize provider and contract
+  const initializeProviderAndContract = useCallback(async () => {
     if (typeof window === 'undefined') {
       return null;
     }
@@ -135,19 +118,17 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const networkInfo = await ethersProvider.getNetwork();
       const networkName = getNetworkNameFromChainId(networkInfo.chainId);
       
-      const daoAddress = getContractAddress('DAOGovLite', networkName);
-      const tokenAddress = getContractAddress('GovernanceToken', networkName);
+      const contractAddress = getContractAddress(networkName);
 
-      // Create contracts with signer if available, otherwise use provider for read-only
+      // Create contract with signer if available, otherwise use provider for read-only
       const contractProvider = signer || ethersProvider;
-      const daoContract = new ethers.Contract(daoAddress, DAOGovLiteABI, contractProvider);
-      const tokenContract = new ethers.Contract(tokenAddress, GovernanceTokenABI, contractProvider);
+      const contract = new ethers.Contract(contractAddress, DAOGovLiteWithTokenABI, contractProvider);
 
       // Get token balance if account is available
       let tokenBalance = '0';
       if (account) {
         try {
-          const balanceWei = await tokenContract.balanceOf(account);
+          const balanceWei = await contract.balanceOf(account);
           tokenBalance = ethers.utils.formatUnits(balanceWei, 18);
         } catch (error) {
           console.error('Error fetching token balance:', error);
@@ -157,8 +138,7 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setState(prev => ({
         ...prev,
         provider: ethersProvider,
-        daoContract,
-        tokenContract,
+        contract,
         chainId: networkInfo.chainId,
         account,
         isConnected: !!account,
@@ -167,22 +147,21 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       return {
         provider: ethersProvider,
-        daoContract,
-        tokenContract,
+        contract,
         chainId: networkInfo.chainId,
         account,
         isConnected: !!account,
         tokenBalance,
       };
     } catch (error) {
-      console.error('Failed to initialize provider and contracts:', error);
+      console.error('Failed to initialize provider and contract:', error);
       return null;
     }
   }, []);
 
   // Initialize on first load
   useEffect(() => {
-    initializeProviderAndContracts();
+    initializeProviderAndContract();
     
     // Listen for account changes
     if (window.ethereum) {
@@ -197,7 +176,7 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({ children }) =>
           }));
         } else {
           // Reinitialize with new account
-          initializeProviderAndContracts();
+          initializeProviderAndContract();
         }
       });
       
@@ -215,7 +194,7 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({ children }) =>
         window.ethereum.removeAllListeners('chainChanged');
       }
     };
-  }, [initializeProviderAndContracts]);
+  }, [initializeProviderAndContract]);
 
   // Connect wallet
   const connectWallet = async () => {
@@ -233,7 +212,7 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({ children }) =>
       });
 
       if (accounts && accounts.length > 0) {
-        const contracts = await initializeProviderAndContracts();
+        const contracts = await initializeProviderAndContract();
         
         if (contracts) {
           setState(prev => ({
@@ -243,11 +222,52 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({ children }) =>
             tokenBalance: contracts.tokenBalance,
             isLoading: false,
           }));
+          
+          // Auto-delegate tokens if needed
+          await autoDelegateTokens(accounts[0]);
         }
       }
     } catch (error) {
       console.error('Error connecting to wallet:', error);
       setState(prev => ({ ...prev, isLoading: false }));
+    }
+  };
+
+  // Auto-delegate tokens function
+  const autoDelegateTokens = async (account: string) => {
+    if (!state.contract) return;
+    
+    try {
+      // Check if the user has already delegated their tokens
+      const currentDelegate = await state.contract.delegates(account);
+      
+      // If the user hasn't delegated yet and has a token balance
+      if (currentDelegate === ethers.constants.AddressZero) {
+        const balance = await state.contract.balanceOf(account);
+        
+        if (balance.gt(0)) {
+          console.log("Auto-delegating tokens to activate voting power...");
+          
+          // Check if delegate function exists
+          if (typeof state.contract.delegate === 'function') {
+            try {
+              // Delegate to self
+              const tx = await state.contract.delegate(account);
+              await tx.wait();
+              console.log("✅ Successfully auto-delegated tokens to enable voting!");
+              
+              // Show toast notification
+              if (typeof window !== 'undefined' && window.alert) {
+                window.alert("Your tokens have been auto-delegated to activate your voting power!");
+              }
+            } catch (error) {
+              console.error("Error auto-delegating tokens:", error);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error checking delegation status:", error);
     }
   };
 
@@ -272,8 +292,8 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // Get all proposal IDs
   const getProposals = async (): Promise<number[]> => {
-    if (!state.daoContract) {
-      console.error('DAO contract not initialized');
+    if (!state.contract) {
+      console.error('Contract not initialized');
       return [];
     }
 
@@ -283,7 +303,7 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
 
     try {
-      const proposalIds = await state.daoContract.getProposals();
+      const proposalIds = await state.contract.getProposals();
       const result = proposalIds.map((id: ethers.BigNumber) => id.toNumber());
       
       // Cache the result
@@ -301,8 +321,8 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // Get proposal by ID
   const getProposalById = async (id: number): Promise<Proposal | null> => {
-    if (!state.daoContract) {
-      console.error('DAO contract not initialized');
+    if (!state.contract) {
+      console.error('Contract not initialized');
       return null;
     }
 
@@ -312,7 +332,7 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
 
     try {
-      const proposalData = await state.daoContract.getProposal(id);
+      const proposalData = await state.contract.getProposal(id);
       
       const [
         proposer,
@@ -373,8 +393,8 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // Create a new proposal
   const createProposal = async (title: string, description: string, duration: number): Promise<number | null> => {
-    if (!state.daoContract || !state.account) {
-      console.error('DAO contract not initialized or wallet not connected');
+    if (!state.contract || !state.account) {
+      console.error('Contract not initialized or wallet not connected');
       return null;
     }
 
@@ -383,7 +403,7 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     try {
       // Call the contract method
-      const tx = await state.daoContract.createProposal(title, description, durationSeconds);
+      const tx = await state.contract.createProposal(title, description, durationSeconds);
       const receipt = await tx.wait();
       
       // Get the proposal ID from events
@@ -406,14 +426,14 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // Vote on a proposal
   const voteOnProposal = async (proposalId: number, voteFor: boolean): Promise<boolean> => {
-    if (!state.daoContract || !state.account) {
-      console.error('DAO contract not initialized or wallet not connected');
+    if (!state.contract || !state.account) {
+      console.error('Contract not initialized or wallet not connected');
       return false;
     }
 
     try {
       // Call the contract method
-      const tx = await state.daoContract.vote(proposalId, voteFor);
+      const tx = await state.contract.vote(proposalId, voteFor);
       const receipt = await tx.wait();
       
       // Check if the transaction was successful
@@ -426,14 +446,14 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // Execute a proposal
   const executeProposal = async (proposalId: number): Promise<boolean> => {
-    if (!state.daoContract || !state.account) {
-      console.error('DAO contract not initialized or wallet not connected');
+    if (!state.contract || !state.account) {
+      console.error('Contract not initialized or wallet not connected');
       return false;
     }
 
     try {
       // Call the contract method
-      const tx = await state.daoContract.executeProposal(proposalId);
+      const tx = await state.contract.executeProposal(proposalId);
       const receipt = await tx.wait();
       
       // Check if the transaction was successful
@@ -446,16 +466,97 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // Get vote info for a proposal
   const getVoteInfo = async (proposalId: number): Promise<{ hasVoted: boolean; support: boolean | null; votingPower: number }> => {
-    if (!state.daoContract || !state.account) {
-      console.error('DAO contract not initialized or wallet not connected');
+    if (!state.contract || !state.account) {
+      console.error('Contract not initialized or wallet not connected');
       return { hasVoted: false, support: null, votingPower: 0 };
     }
 
     try {
-      // Call the contract method
-      const [hasVoted, support, votingPower] = await state.daoContract.getVoteInfo(proposalId, state.account);
+      // Check if user has voted on this proposal using different methods
+      let hasVoted = false;
+      try {
+        // Try getUserVote first if it exists
+        if (typeof state.contract.getUserVote === 'function') {
+          const [voted, support] = await state.contract.getUserVote(proposalId, state.account);
+          return { 
+            hasVoted: voted, 
+            support, 
+            votingPower: parseFloat(ethers.utils.formatUnits(await state.contract.getVotingPower(state.account), 18))
+          };
+        }
+        // Try hasVoted if it exists
+        else if (typeof state.contract.hasVoted === 'function') {
+          hasVoted = await state.contract.hasVoted(proposalId, state.account);
+        }
+        // If neither function exists, check proposal data directly
+        else {
+          // Try to get proposal data and check votes
+          const proposal = await state.contract.getProposal(proposalId);
+          // We can't determine if they voted directly, so rely on localStorage
+          console.log("Contract doesn't have vote checking functions - relying on localStorage");
+        }
+      } catch (error) {
+        console.error("Error checking vote status:", error);
+        // If all methods fail, check localStorage
+      }
+
+      // Get user's vote direction from local storage
+      let support = null;
+      if (hasVoted) {
+        // Try to get from local storage
+        const storedVoteKey = `vote-${proposalId}-${state.account}`;
+        const storedVote = localStorage.getItem(storedVoteKey);
+        if (storedVote) {
+          try {
+            const parsedVote = JSON.parse(storedVote);
+            support = parsedVote.support;
+          } catch (error) {
+            console.error("Error parsing localStorage vote:", error);
+          }
+        }
+
+        // If not in localStorage, check voting results to determine
+        if (support === null) {
+          try {
+            const proposal = await state.contract.getProposal(proposalId);
+            const votesFor = proposal[5];
+            const votesAgainst = proposal[6];
+            
+            // If there are votes for and no votes against, assume voted for
+            if (votesFor.gt(0) && votesAgainst.eq(0)) {
+              support = true;
+            } 
+            // If there are votes against and no votes for, assume voted against
+            else if (votesAgainst.gt(0) && votesFor.eq(0)) {
+              support = false;
+            }
+          } catch (error) {
+            console.error("Error determining vote direction:", error);
+          }
+        }
+      } else {
+        // Check localStorage even if contract says hasVoted is false
+        const storedVoteKey = `vote-${proposalId}-${state.account}`;
+        const storedVote = localStorage.getItem(storedVoteKey);
+        if (storedVote) {
+          try {
+            const parsedVote = JSON.parse(storedVote);
+            hasVoted = true;
+            support = parsedVote.support;
+          } catch (error) {
+            console.error("Error parsing localStorage vote:", error);
+          }
+        }
+      }
       
-      return { hasVoted, support, votingPower: parseFloat(ethers.utils.formatUnits(votingPower, 18)) };
+      // Get voting power (token balance)
+      const votingPower = await state.contract.getVotingPower(state.account);
+      
+      return { 
+        hasVoted, 
+        support,
+        votingPower: parseFloat(ethers.utils.formatUnits(votingPower, 18)) 
+      };
     } catch (error) {
       console.error(`Error getting vote info for proposal #${proposalId}:`, error);
       return { hasVoted: false, support: null, votingPower: 0 };
@@ -477,4 +578,4 @@ export const Web3Provider: React.FC<{ children: ReactNode }> = ({ children }) =>
       {children}
     </Web3Context.Provider>
   );
-};
+}

@@ -3,22 +3,14 @@
 This directory contains the smart contracts for the DAOGovLite governance platform, implementing a decentralized autonomous organization (DAO) with proposal and voting capabilities.
 
 ## Contracts
+### DAOGovLiteWithToken.sol
 
-### DAOGovLite.sol
-
-The main governance contract that handles:
+The combined governance and token contract that handles:
 - Proposal creation and management
-- Voting mechanisms
+- Voting mechanisms with delegation
 - Execution of approved proposals
+- Token management with automatic delegation
 - Access control based on token holdings
-
-### GovernanceToken.sol
-
-An ERC20 token with voting capabilities:
-- ERC20 compliant with additional voting features
-- Extends ERC20Votes from OpenZeppelin
-- Configurable token supply with minting functionality
-- Delegated voting power
 
 ## Setup
 
@@ -28,9 +20,8 @@ An ERC20 token with voting capabilities:
    ```
 
 2. The contracts use OpenZeppelin libraries (v4.9.0) for secure implementations of:
-   - ERC20 token standard
-   - Voting extensions
-   - Access control
+   - ERC20 token standard with voting extensions (ERC20Votes)
+   - Access control via Ownable
 
 ## Compilation
 
@@ -48,22 +39,66 @@ This will:
 
 ## Contract Deployment
 
-To deploy the contracts:
+To deploy the contract:
 
-1. Create a `.env` file with your configuration:
+1. Create a `.env` file with your configuration (optional):
    ```
    PRIVATE_KEY=your_wallet_private_key
-   RPC_URL=your_rpc_endpoint
+   ETH_PROVIDER_URL=your_rpc_endpoint
    ```
 
-2. Deploy the GovernanceToken first
-3. Use the token address when deploying the DAOGovLite contract
+2. Run the deployment script:
+   ```
+   node deploy.js
+   ```
+
+3. The script will:
+   - Deploy the combined DAOGovLiteWithToken contract
+   - Save deployment information to `deployment-fixed-voting-info.json`
+   - Output the contract address for frontend integration
+
+## Token Management
+
+### Important: Token Delegation
+
+In this governance system, **delegation of tokens is required to activate voting power**:
+
+- Tokens must be delegated before they can be used for voting
+- By default, new tokens minted or transferred will now attempt to auto-delegate
+- Without delegation, users can hold tokens but cannot vote
+
+### Funding Users
+
+Use the `fund-user.js` script to mint tokens to users:
+
+```
+node fund-user.js <recipient_address>
+```
+
+This script:
+- Mints tokens to the specified address
+- Attempts to check delegation status
+- Provides instructions if delegation is needed
+
+## User Voting Requirements
+
+- **Proposal Creation**: Requires 1000 tokens minimum
+- **Voting**: Requires any token balance with delegation
+- **Execution**: Anyone can execute a passed proposal
 
 ## Integration with Frontend
 
 The frontend application uses:
 1. Contract ABIs from the `build` directory
-2. Contract addresses specified during deployment
+2. Contract address specified in `deployment-fixed-voting-info.json`
+
+## Troubleshooting
+
+If users report issues with voting:
+1. Verify they have delegated tokens (call `delegates(userAddress)`)
+2. Check their token balance (call `balanceOf(userAddress)`)
+3. Check voting power (call `getVotingPower(userAddress)`)
+4. If power is 0 despite having tokens, delegate by calling `delegate(userAddress)`
 
 ## Development Notes
 

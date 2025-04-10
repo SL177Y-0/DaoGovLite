@@ -16,8 +16,7 @@ export interface Web3StateType {
   chainId: number | null
   isConnected: boolean
   provider: any | null
-  daoContract: any | null
-  tokenContract: any | null
+  contract: any | null
   tokenBalance: string
   isLoading: boolean
 }

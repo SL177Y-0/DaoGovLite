@@ -3,7 +3,7 @@ const path = require("path");
 const solc = require("solc");
 
 // Define contract files to compile
-const contractFiles = ["DAOGovLite.sol", "GovernanceToken.sol"];
+const contractFiles = ['DAOGovLiteWithToken.sol'];
 const buildPath = path.join(__dirname, "build");
 
 // Ensure build directory exists

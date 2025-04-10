@@ -45,14 +45,10 @@ interface ContractAddresses {
 }
 
 const contractAddresses: ContractAddresses = {
-  "DAOGovLite": {
-    [NETWORKS.LOCALHOST]: process.env.NEXT_PUBLIC_CONTRACT_DAO_LOCALHOST || "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-    [NETWORKS.SEPOLIA]: process.env.NEXT_PUBLIC_CONTRACT_DAO_SEPOLIA || "0x0c8150E9031Ad14011A094BBB4D1cab87A1E0A8d",
-  },
-  "GovernanceToken": {
-    [NETWORKS.LOCALHOST]: process.env.NEXT_PUBLIC_CONTRACT_TOKEN_LOCALHOST || "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-    [NETWORKS.SEPOLIA]: process.env.NEXT_PUBLIC_CONTRACT_TOKEN_SEPOLIA || "0x66fB2EedC540ec7E3db84543a8227c9682e16C75",
-  },
+"DAOGovLiteWithToken": {
+  [NETWORKS.LOCALHOST]: "your_deployed_address",
+  [NETWORKS.SEPOLIA]: "0xb56787e88E184b542702724280A96f6EA363A062"
+},
 };
 
 export const getContractAddress = (contractName: string, network: string = DEFAULT_NETWORK): string => {

@@ -1,12 +1,13 @@
 "use client"
 
-import { useCallback, useEffect, useContext } from "react"
+import { useCallback, useEffect, useContext, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Home, FileText, Plus, BarChart, Wallet, LogOut, ChevronRight } from "lucide-react"
 import { cn, formatAddress } from "@/lib/utils"
 import { Web3Context } from "@/contexts/Web3Context"
 import { useSidebar } from "@/contexts/SidebarContext"
+import { ethers } from "ethers"
 
 type SidebarLinkProps = {
   icon: React.ReactNode;
@@ -62,6 +63,56 @@ const WalletButton = ({
   onDisconnect: () => void;
   isExpanded: boolean;
 }) => {
+  // Add state and function to handle delegation
+  const [isDelegating, setIsDelegating] = useState(false);
+  const [delegationStatus, setDelegationStatus] = useState<'none' | 'delegated' | 'unknown'>('unknown');
+  const { contract } = useContext(Web3Context);
+  
+  // Check delegation status on load
+  useEffect(() => {
+    const checkDelegation = async () => {
+      if (!contract || !account) {
+        setDelegationStatus('unknown');
+        return;
+      }
+      
+      try {
+        const currentDelegate = await contract.delegates(account);
+        if (currentDelegate === ethers.constants.AddressZero) {
+          setDelegationStatus('none');
+        } else if (currentDelegate.toLowerCase() === account.toLowerCase()) {
+          setDelegationStatus('delegated');
+        } else {
+          // Delegated to someone else
+          setDelegationStatus('delegated');
+        }
+      } catch (error) {
+        console.error("Error checking delegation status:", error);
+        setDelegationStatus('unknown');
+      }
+    };
+    
+    checkDelegation();
+  }, [contract, account]);
+  
+  // Function to delegate tokens
+  const delegateTokens = async () => {
+    if (!contract || !account) return;
+    
+    setIsDelegating(true);
+    try {
+      const tx = await contract.delegate(account);
+      await tx.wait();
+      setDelegationStatus('delegated');
+      alert("Successfully delegated tokens! Your voting power is now active.");
+    } catch (error) {
+      console.error("Error delegating tokens:", error);
+      alert("Failed to delegate tokens. Please try again.");
+    } finally {
+      setIsDelegating(false);
+    }
+  };
+  
   if (isExpanded) {
     return (
       <div className="glassmorphism p-4 rounded-lg">
@@ -74,6 +125,28 @@ const WalletButton = ({
             <div className="text-dao-lightBlue font-syne text-sm mb-3">
               {tokenBalance} Governance Tokens
             </div>
+            
+            {/* Add delegation button if not delegated */}
+            {delegationStatus === 'none' && parseFloat(tokenBalance) > 0 && (
+              <button
+                onClick={delegateTokens}
+                disabled={isDelegating}
+                className="w-full bg-green-600 hover:bg-green-700 font-syne text-white py-2 rounded-md flex items-center justify-center gap-2 transition-colors duration-200 hover-glow-green mb-2"
+              >
+                {isDelegating ? "Delegating..." : "Activate Voting Power"}
+              </button>
+            )}
+            
+            {/* Show delegation status */}
+            {delegationStatus === 'delegated' && (
+              <div className="text-green-400 text-sm mb-2 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Voting Power Active
+              </div>
+            )}
+            
             <button 
               onClick={onDisconnect}
               className="w-full bg-red-500 hover:bg-red-600 font-syne text-white py-2 rounded-md flex items-center justify-center gap-2 transition-colors duration-200 hover-glow-red"

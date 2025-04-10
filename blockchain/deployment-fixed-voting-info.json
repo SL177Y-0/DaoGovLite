@@ -1,0 +1,18 @@
+{
+  "contractAddress": "0xb56787e88E184b542702724280A96f6EA363A062",
+  "transactionHash": "0xdef1e49fe27a0a318004cddd1d8b41e66eb6cec9a6b3bca5682f2ab5c5460df6",
+  "tokenName": "DAOGovToken",
+  "tokenSymbol": "DGT",
+  "deployer": "0x6976a8C4686AF489BF532625899EA0064351f6f1",
+  "timestamp": "2025-04-10T10:29:16.948Z",
+  "network": "sepolia",
+  "gasUsed": "3116189",
+  "totalCost": "0.006862510823126094",
+  "defaultTokenAmount": "500",
+  "features": [
+    "FixedVoting",
+    "AutoVotingPower",
+    "IncreasedDefaultTokens",
+    "AutoDelegation"
+  ]
+}

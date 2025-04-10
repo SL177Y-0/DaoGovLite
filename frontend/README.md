@@ -13,6 +13,7 @@ This directory contains the frontend application for the DAOGovLite governance p
 ## Features
 
 - **Wallet Connection**: Seamless integration with MetaMask and other Web3 wallets
+- **Token Delegation**: Automatic and manual delegation to activate voting power
 - **Proposal Management**:
   - Create new governance proposals
   - Vote on active proposals
@@ -36,8 +37,8 @@ frontend/
 ├── contexts/             # React Context providers
 │   └── Web3Context.tsx   # Blockchain connectivity
 ├── contracts/            # Contract ABIs and addresses
-│   ├── DAOGovLite-abi.json
-│   ├── DAOGovLite-address.json
+│   ├── DAOGovLiteWithToken-abi.json
+│   ├── DAOGovLiteWithToken-address.json
 │   └── ...
 ├── lib/                  # Utility functions
 │   ├── contracts/        # Contract utilities
@@ -52,10 +53,11 @@ frontend/
    npm install
    ```
 
-2. Create a `.env.local` file based on `.env.example`:
+2. Update contract address in `contracts/DAOGovLiteWithToken-address.json` and `lib/contracts/addresses.ts`:
    ```
-   NEXT_PUBLIC_DAO_CONTRACT_ADDRESS=your_dao_contract_address
-   NEXT_PUBLIC_TOKEN_CONTRACT_ADDRESS=your_token_contract_address
+   {
+     "address": "your_deployed_contract_address"
+   }
    ```
 
 ## Running the Application
@@ -83,12 +85,45 @@ The frontend integrates with the blockchain contracts through:
    - Wallet connection handling
    - Contract instance creation
    - Transaction management
+   - Auto-delegation of tokens
 
-## Environment Configuration
+## Key User Workflows
 
-- Configure contract addresses in `.env.local` file
-- Supports multiple networks (localhost, testnet, mainnet)
-- Network switching is handled automatically
+### Token Delegation (Important!)
+
+For tokens to be usable for voting, they must be delegated:
+
+1. **Auto-delegation**:
+   - When a user connects their wallet, the application attempts to auto-delegate tokens
+   - This happens in `Web3Context.tsx` via the `autoDelegateTokens` function
+
+2. **Manual delegation**:
+   - If auto-delegation fails, users can manually delegate via the "Activate Voting Power" button in the sidebar
+   - Delegation status is visually indicated in the UI
+
+### Voting Process
+
+1. Users must have delegated tokens to vote (any non-zero amount)
+2. Proposals require a minimum of 1000 tokens to create
+3. Votes are recorded on-chain and in local storage for UI state management
+
+## Troubleshooting
+
+If users report issues with voting:
+
+1. **Token delegation issues**:
+   - Check if the wallet shows "Voting Power Active" indicator in the sidebar
+   - If not, use the "Activate Voting Power" button
+   - Verify delegation by checking the browser console logs
+
+2. **UI display issues**:
+   - Try disconnecting and reconnecting wallet
+   - Clear browser localStorage and cache
+   - Check browser console for errors
+
+3. **Transaction errors**:
+   - Ensure users have ETH for gas
+   - Verify they're connected to the correct network
 
 ## Development Notes
 

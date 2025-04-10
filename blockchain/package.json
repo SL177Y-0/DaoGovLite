@@ -6,7 +6,10 @@
     "compile": "node compile.js"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.9.0",
-    "solc": "^0.8.20"
+    "@openzeppelin/contracts": "^4.9.6",
+    "ethers": "^5.7.2"
+  },
+  "devDependencies": {
+    "solc": "^0.8.29"
   }
 }
