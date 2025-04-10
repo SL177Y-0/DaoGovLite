@@ -1,95 +1,21 @@
 const { ethers } = require("ethers");
 const fs = require("fs");
 const path = require("path");
-const solc = require("solc");
-
-// Read the contract source
-const contractPath = path.join(__dirname, "DAOGovLiteWithToken.sol");
-const contractSource = fs.readFileSync(contractPath, "utf8");
-
-// Function to find all import statements in the contract
-function findImports(importPath) {
-  try {
-    // Handle relative imports and OpenZeppelin imports
-    let resolvedPath;
-    if (importPath.startsWith('@openzeppelin')) {
-      resolvedPath = path.resolve(__dirname, 'node_modules', importPath);
-    } else {
-      resolvedPath = path.resolve(path.dirname(contractPath), importPath);
-    }
-    
-    return { contents: fs.readFileSync(resolvedPath, 'utf8') };
-  } catch (e) {
-    console.error(`Error finding import ${importPath}: ${e.message}`);
-    return { error: `File not found: ${importPath}` };
-  }
-}
+const { compileContract } = require("./compile");
 
 async function main() {
   try {
-    console.log("Compiling updated DAOGovLiteWithToken contract with fixed voting...");
+    console.log("Starting deployment process for DAOGovLiteWithToken contract...");
     
-    // Prepare input for solc compiler
-    const input = {
-      language: "Solidity",
-      sources: {
-        "DAOGovLiteWithToken.sol": {
-          content: contractSource,
-        },
-      },
-      settings: {
-        outputSelection: {
-          "*": {
-            "*": ["abi", "evm.bytecode"],
-          },
-        },
-        optimizer: {
-          enabled: true,
-          runs: 200, // Balance between deployment cost and function call cost
-        },
-      },
-    };
-
-    // Compile with solc
-    console.log("Running solc compiler...");
-    const output = JSON.parse(
-      solc.compile(JSON.stringify(input), { import: findImports })
-    );
-
-    // Check for errors
-    if (output.errors) {
-      let hasError = false;
-      output.errors.forEach((error) => {
-        if (error.severity === "error") {
-          console.error(error.formattedMessage);
-          hasError = true;
-        } else {
-          console.warn(error.formattedMessage);
-        }
-      });
-
-      if (hasError) {
-        console.error("Compilation failed");
-        process.exit(1);
-      }
+    // Step 1: Compile the contract and get ABI and bytecode
+    console.log("Compiling contract...");
+    const { abi, bytecode } = compileContract();
+    
+    if (!abi || !bytecode) {
+      console.error("Compilation failed: Missing ABI or bytecode");
+      process.exit(1);
     }
-
-    const contractOutput = output.contracts["DAOGovLiteWithToken.sol"]["DAOGovLiteWithToken"];
-    const abi = contractOutput.abi;
-    const bytecode = contractOutput.evm.bytecode.object;
-
-    // Save ABI and bytecode to files
-    const buildDir = path.join(__dirname, "build");
-    if (!fs.existsSync(buildDir)) {
-      fs.mkdirSync(buildDir);
-    }
-
-    fs.writeFileSync(
-      path.join(buildDir, "DAOGovLiteWithToken-Fixed.abi"),
-      JSON.stringify(abi)
-    );
-    fs.writeFileSync(path.join(buildDir, "DAOGovLiteWithToken-Fixed.bin"), bytecode);
-
+    
     console.log("Contract compiled successfully");
 
     // Provider setup
@@ -117,7 +43,7 @@ async function main() {
     const tokenName = "DAOGovToken";
     const tokenSymbol = "DGT";
 
-    console.log(`Deploying updated DAOGovLiteWithToken contract with name=${tokenName} and symbol=${tokenSymbol}...`);
+    console.log(`Deploying DAOGovLiteWithToken contract with name=${tokenName} and symbol=${tokenSymbol}...`);
 
     // Create contract factory
     const factory = new ethers.ContractFactory(abi, bytecode, wallet);
@@ -136,8 +62,14 @@ async function main() {
       gasLimit: 5000000 // Fixed gas limit
     };
 
-    // Deploy contract
-    const contract = await factory.deploy(tokenName, tokenSymbol, deploymentOptions);
+    // Deploy contract - FIXED: Constructor args (tokenName, tokenSymbol) and transaction overrides object
+    console.log("Deploying with correct constructor arguments...");
+    // First two parameters are constructor arguments, then options object as SEPARATE parameter
+    const contract = await factory.deploy(
+      tokenName,  // First constructor arg
+      tokenSymbol, // Second constructor arg
+      deploymentOptions // This is NOT a constructor arg - it's a transaction overrides object
+    );
     console.log(`Deployment transaction hash: ${contract.deployTransaction.hash}`);
 
     console.log("Waiting for transaction to be mined...");
@@ -165,6 +97,21 @@ async function main() {
       path.join(__dirname, "deployment-fixed-voting-info.json"),
       JSON.stringify(deploymentInfo, null, 2)
     );
+    
+    // Save contract address to frontend directory
+    try {
+      const frontendContractDir = path.join(__dirname, '../frontend/contracts');
+      if (fs.existsSync(frontendContractDir)) {
+        const addressFile = path.join(frontendContractDir, 'DAOGovLiteWithToken-address.json');
+        fs.writeFileSync(
+          addressFile,
+          JSON.stringify({ address: contract.address }, null, 2)
+        );
+        console.log(`Contract address saved to frontend at: ${addressFile}`);
+      }
+    } catch (error) {
+      console.warn("Could not update frontend contract address:", error.message);
+    }
 
     console.log(`Deployment information saved to deployment-fixed-voting-info.json`);
     console.log(`\nFrontend Integration Instructions:`);
