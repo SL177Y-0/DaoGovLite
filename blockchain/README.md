@@ -3,6 +3,9 @@
 This directory contains the smart contracts for the DAOGovLite governance platform, implementing a decentralized autonomous organization (DAO) with proposal and voting capabilities.
 
 ## Contracts
+
+Tip - To Fund Other User use node fund-user.js UserAddress
+
 ### DAOGovLiteWithToken.sol
 
 The combined governance and token contract that handles:
