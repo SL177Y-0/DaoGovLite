@@ -2,6 +2,10 @@
 
 A full-stack decentralized governance platform that enables users to create, vote on, and execute proposals on the blockchain. This platform combines a modern React frontend with secure Solidity smart contracts to deliver a complete DAO governance solution.
 
+
+https://github.com/user-attachments/assets/5d553268-5a9c-4ff1-8aac-679851f1a2c2
+
+
 ## 📋 Features
 
 - **Proposal Management**
